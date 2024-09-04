@@ -14,38 +14,28 @@ class DashboardController extends Controller
         $tanggalSekarang = now();
 
         // Bayi di bawah 12 bulan
-        $query = Pendataan::select(DB::raw('COUNT(*) as total_bayi'))
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '12 months' >= ?", [$tanggalSekarang])
-            ->get();
-        $totalBayiUnder12 = $query[0]->total_bayi;
+        $totalBayiUnder12 = Pendataan::whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) < 12", [$tanggalSekarang])
+            ->count();
 
         // Bayi di bawah 24 bulan
-        $query = Pendataan::select(DB::raw('COUNT(*) as total_bayi'))
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '12 months' < ?", [$tanggalSekarang])
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '24 months' >= ?", [$tanggalSekarang])
-            ->get();
-        $totalBayiUnder24 = $query[0]->total_bayi;
+        $totalBayiUnder24 = Pendataan::whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) >= 12", [$tanggalSekarang])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) < 24", [$tanggalSekarang])
+            ->count();
 
         // Bayi di bawah 36 bulan
-        $query = Pendataan::select(DB::raw('COUNT(*) as total_bayi'))
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '24 months' < ?", [$tanggalSekarang])
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '36 months' >= ?", [$tanggalSekarang])
-            ->get();
-        $totalBayiUnder36 = $query[0]->total_bayi;
+        $totalBayiUnder36 = Pendataan::whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) >= 24", [$tanggalSekarang])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) < 36", [$tanggalSekarang])
+            ->count();
 
         // Bayi di bawah 48 bulan
-        $query = Pendataan::select(DB::raw('COUNT(*) as total_bayi'))
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '36 months' < ?", [$tanggalSekarang])
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '48 months' >= ?", [$tanggalSekarang])
-            ->get();
-        $totalBayiUnder48 = $query[0]->total_bayi;
+        $totalBayiUnder48 = Pendataan::whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) >= 36", [$tanggalSekarang])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) < 48", [$tanggalSekarang])
+            ->count();
 
         // Bayi di bawah 60 bulan
-        $query = Pendataan::select(DB::raw('COUNT(*) as total_bayi'))
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '48 months' < ?", [$tanggalSekarang])
-            ->whereRaw("tgl_lahir_bayi + INTERVAL '60 months' >= ?", [$tanggalSekarang])
-            ->get();
-        $totalBayiUnder60 = $query[0]->total_bayi;
+        $totalBayiUnder60 = Pendataan::whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) >= 48", [$tanggalSekarang])
+            ->whereRaw("TIMESTAMPDIFF(MONTH, tgl_lahir_bayi, ?) < 60", [$tanggalSekarang])
+            ->count();
 
         return view('dashboard', [
             'totalPuskesmas' => User::where('role', 'puskesmas')->count(),
